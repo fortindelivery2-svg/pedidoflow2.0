@@ -19,7 +19,7 @@ const MotoboysTable = ({ motoboys, onEdit, onDelete }) => {
   return (
     <div className="bg-[var(--layout-bg)] rounded-lg shadow-lg border border-[var(--layout-border)] flex flex-col h-full">
       <div className="overflow-x-auto custom-scrollbar flex-1">
-        <table className="w-full text-left border-collapse">
+        <table className="w-full min-w-[900px] text-left border-collapse">
           <thead className="bg-[var(--layout-surface-2)] sticky top-0 z-10">
             <tr>
               <th className="p-4 text-xs font-bold text-[var(--layout-text-muted)] uppercase tracking-wider border-b border-[var(--layout-border)]">Nome / CPF</th>

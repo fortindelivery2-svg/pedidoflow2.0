@@ -81,7 +81,7 @@ const ContasAReceberPage = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 animate-in fade-in duration-500">
+    <div className="p-4 sm:p-6 space-y-6 animate-in fade-in duration-500">
       <Helmet>
         <title>Contas a Receber - Dashboard</title>
       </Helmet>
@@ -95,12 +95,12 @@ const ContasAReceberPage = () => {
           </h1>
           <p className="text-[var(--layout-text-muted)] mt-1">Gerencie suas vendas em fiado e recebimentos</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
           {/* Debug Button - visible in development/demo */}
            <Button 
             onClick={() => window.debugDB && window.debugDB()} 
             variant="ghost" 
-            className="text-[var(--layout-text-muted)] text-xs uppercase"
+            className="text-[var(--layout-text-muted)] text-xs uppercase w-full sm:w-auto"
             title="Open Console to see logs"
           >
             Debug DB (Console)
@@ -109,7 +109,7 @@ const ContasAReceberPage = () => {
           <Button 
             onClick={() => fetchContas(filters)} 
             variant="outline"
-            className="bg-[var(--layout-bg)] border-[var(--layout-border)] text-[var(--layout-text-muted)] hover:text-white hover:bg-[var(--layout-border)]"
+            className="bg-[var(--layout-bg)] border-[var(--layout-border)] text-[var(--layout-text-muted)] hover:text-white hover:bg-[var(--layout-border)] w-full sm:w-auto"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Atualizar
@@ -119,7 +119,7 @@ const ContasAReceberPage = () => {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-gradient-to-br from-blue-600/20 to-blue-900/20 border border-blue-500/30 rounded-xl p-6 shadow-lg backdrop-blur-sm">
+        <div className="bg-gradient-to-br from-blue-600/20 to-blue-900/20 border border-blue-500/30 rounded-xl p-4 sm:p-6 shadow-lg backdrop-blur-sm">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-blue-400 text-sm font-bold uppercase tracking-wider">Total de Contas</p>
@@ -131,7 +131,7 @@ const ContasAReceberPage = () => {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-red-600/20 to-red-900/20 border border-red-500/30 rounded-xl p-6 shadow-lg backdrop-blur-sm">
+        <div className="bg-gradient-to-br from-red-600/20 to-red-900/20 border border-red-500/30 rounded-xl p-4 sm:p-6 shadow-lg backdrop-blur-sm">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-red-400 text-sm font-bold uppercase tracking-wider">A Receber</p>
@@ -143,7 +143,7 @@ const ContasAReceberPage = () => {
           </div>
         </div>
 
-      <div className="bg-gradient-to-br from-[var(--layout-accent)]/20 to-green-900/20 border border-[var(--layout-accent)]/30 rounded-xl p-6 shadow-lg backdrop-blur-sm">
+      <div className="bg-gradient-to-br from-[var(--layout-accent)]/20 to-green-900/20 border border-[var(--layout-accent)]/30 rounded-xl p-4 sm:p-6 shadow-lg backdrop-blur-sm">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-[var(--layout-accent)] text-sm font-bold uppercase tracking-wider">Recebido</p>
@@ -155,7 +155,7 @@ const ContasAReceberPage = () => {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-orange-600/20 to-orange-900/20 border border-orange-500/30 rounded-xl p-6 shadow-lg backdrop-blur-sm">
+        <div className="bg-gradient-to-br from-orange-600/20 to-orange-900/20 border border-orange-500/30 rounded-xl p-4 sm:p-6 shadow-lg backdrop-blur-sm">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-orange-400 text-sm font-bold uppercase tracking-wider">Vencidas</p>
@@ -169,7 +169,7 @@ const ContasAReceberPage = () => {
       </div>
 
       {/* Filters Section */}
-      <div className="bg-[var(--layout-bg)] rounded-xl border border-[var(--layout-border)] p-4 flex flex-col md:flex-row gap-4 items-center">
+      <div className="bg-[var(--layout-bg)] rounded-xl border border-[var(--layout-border)] p-4 flex flex-col lg:flex-row gap-4 items-start lg:items-center">
         <div className="flex items-center gap-2 text-[var(--layout-text-muted)] text-sm font-medium whitespace-nowrap">
           <Filter className="w-4 h-4" /> Filtros:
         </div>
@@ -177,7 +177,7 @@ const ContasAReceberPage = () => {
         <select
           value={filters.status}
           onChange={(e) => setFilters({...filters, status: e.target.value})}
-          className="bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[var(--layout-accent)]"
+          className="w-full sm:w-auto bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[var(--layout-accent)]"
         >
           <option value="Todos">Todos Status</option>
           <option value="Pendente">Pendente</option>
@@ -188,7 +188,7 @@ const ContasAReceberPage = () => {
         <select
           value={filters.clienteId}
           onChange={(e) => setFilters({...filters, clienteId: e.target.value})}
-          className="bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[var(--layout-accent)] max-w-[200px]"
+          className="w-full sm:w-auto bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[var(--layout-accent)] max-w-[200px]"
         >
           <option value="todos">Todos Clientes</option>
           {clientes.map(c => (
@@ -196,19 +196,19 @@ const ContasAReceberPage = () => {
           ))}
         </select>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full md:w-auto">
           <input
             type="date"
             value={filters.startDate}
             onChange={(e) => setFilters({...filters, startDate: e.target.value})}
-            className="bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[var(--layout-accent)]"
+            className="w-full sm:w-auto bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[var(--layout-accent)]"
           />
           <span className="text-[var(--layout-text-muted)]">até</span>
           <input
             type="date"
             value={filters.endDate}
             onChange={(e) => setFilters({...filters, endDate: e.target.value})}
-            className="bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[var(--layout-accent)]"
+            className="w-full sm:w-auto bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[var(--layout-accent)]"
           />
         </div>
       </div>

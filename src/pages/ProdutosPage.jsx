@@ -224,7 +224,7 @@ const ProdutosPage = () => {
   );
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <Helmet>
         <title>Produtos - PDV</title>
       </Helmet>
@@ -234,7 +234,7 @@ const ProdutosPage = () => {
         <p className="text-[var(--layout-text-muted)]">Gerenciar cadastro de produtos e combos</p>
       </div>
 
-      <div className="bg-[var(--layout-surface-2)] rounded-lg p-6 mb-6">
+      <div className="bg-[var(--layout-surface-2)] rounded-lg p-4 sm:p-6 mb-6">
         <div className="flex flex-col md:flex-row gap-4 mb-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--layout-text-muted)]" />
@@ -246,14 +246,14 @@ const ProdutosPage = () => {
               className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg pl-10 pr-4 py-3 text-white placeholder-[var(--layout-text-muted)] focus:border-[var(--layout-accent)] focus:outline-none"
             />
           </div>
-          <Button onClick={() => setIsCreateOpen(true)} className="bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white">
+          <Button onClick={() => setIsCreateOpen(true)} className="bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white w-full md:w-auto">
             <Plus className="w-5 h-5 mr-2" />
             Novo Produto
           </Button>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-[900px]">
             <thead>
               <tr className="border-b border-[var(--layout-border)]">
                 <th className="text-left py-3 px-4 text-[var(--layout-text-muted)] font-medium">Código</th>

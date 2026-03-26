@@ -1,40 +1,10 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import {
-  AlertCircle,
-  Archive,
-  BarChart3,
-  Bike,
-  Bot,
-  Briefcase,
-  CreditCard,
-  History,
-  Package,
-  Palette,
-  ShoppingCart,
-  Store,
-  UserCheck,
-  Users,
-} from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { sidebarMenuItems } from '@/components/sidebarMenuItems';
 
 const Sidebar = () => {
   const location = useLocation();
-  const menuItems = [
-    { path: '/dashboard/pdv', label: 'PDV', icon: ShoppingCart },
-    { path: '/dashboard/clientes', label: 'Clientes', icon: Users },
-    { path: '/dashboard/pessoas/funcionarios', label: 'Funcionários', icon: UserCheck },
-    { path: '/dashboard/motoboys', label: 'Motoboys', icon: Bike },
-    { path: '/dashboard/produtos', label: 'Produtos', icon: Package },
-    { path: '/dashboard/estoque', label: 'Estoque', icon: Archive },
-    { path: '/dashboard/contas-pagar', label: 'Contas a Pagar', icon: AlertCircle },
-    { path: '/dashboard/contas-receber', label: 'Contas a Receber', icon: CreditCard },
-    { path: '/dashboard/relatorios', label: 'Relatórios', icon: BarChart3 },
-    { path: '/dashboard/relatorios/historico-vendas', label: 'Histórico de Vendas', icon: History },
-    { path: '/dashboard/relatorios/caixa', label: 'Caixa', icon: Briefcase },
-    { path: '/dashboard/chatbot', label: 'CHATBOT', icon: Bot },
-    { path: '/dashboard/cores-layout', label: 'Mudar as cores do layout', icon: Palette },
-  ];
 
   return (
     <aside className="hidden w-64 shrink-0 flex-col border-r border-[var(--layout-border)] bg-[var(--layout-bg)] md:flex">
@@ -51,7 +21,7 @@ const Sidebar = () => {
       </div>
 
       <nav className="custom-scrollbar flex-1 space-y-1 overflow-y-auto p-4">
-        {menuItems.map((item) => {
+        {sidebarMenuItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
 

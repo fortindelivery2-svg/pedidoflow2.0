@@ -30,7 +30,7 @@ const SalesHistoryTable = ({ sales, onEdit, onDelete }) => {
   return (
     <div className="bg-[var(--layout-bg)] rounded-lg border border-[var(--layout-border)] overflow-hidden flex flex-col h-full">
       <div className="overflow-auto flex-1 custom-scrollbar">
-        <table className="w-full">
+        <table className="w-full min-w-[960px]">
           <thead className="bg-[var(--layout-surface-2)] sticky top-0 z-10 shadow-md">
             <tr>
               <th className="py-3 px-4 text-left text-xs font-bold text-[var(--layout-text-muted)] uppercase">Pedido</th>

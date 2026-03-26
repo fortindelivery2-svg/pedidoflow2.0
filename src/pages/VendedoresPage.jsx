@@ -190,7 +190,7 @@ const VendedoresPage = () => {
   );
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <Helmet>
         <title>Vendedores - PDV System</title>
         <meta name="description" content="Gerenciamento de vendedores" />
@@ -201,7 +201,7 @@ const VendedoresPage = () => {
         <p className="text-gray-400">Gerenciar cadastro de vendedores</p>
       </div>
 
-      <div className="bg-[#2a3a4a] rounded-lg p-6 mb-6">
+      <div className="bg-[#2a3a4a] rounded-lg p-4 sm:p-6 mb-6">
         <div className="flex flex-col md:flex-row gap-4 mb-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -215,7 +215,7 @@ const VendedoresPage = () => {
           </div>
           <Button
             onClick={() => setIsFormOpen(true)}
-            className="bg-[#00d084] hover:bg-[#00b872] text-white"
+            className="bg-[#00d084] hover:bg-[#00b872] text-white w-full md:w-auto"
           >
             <Plus className="w-5 h-5 mr-2" />
             Novo Vendedor
@@ -223,7 +223,7 @@ const VendedoresPage = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-[800px]">
             <thead>
               <tr className="border-b border-gray-700">
                 <th className="text-left py-3 px-4 text-gray-400 font-medium">Nome</th>
@@ -294,7 +294,7 @@ const VendedoresPage = () => {
       {isFormOpen && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="bg-[#2a3a4a] rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-[#2a3a4a] border-b border-gray-700 p-6 flex items-center justify-between">
+            <div className="sticky top-0 bg-[#2a3a4a] border-b border-gray-700 p-4 sm:p-6 flex items-center justify-between">
               <h2 className="text-2xl font-bold text-white">
                 {editingId ? 'Editar Vendedor' : 'Novo Vendedor'}
               </h2>
@@ -303,7 +303,7 @@ const VendedoresPage = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
               <div>
                 <label className="block text-gray-300 text-sm font-medium mb-2">Nome Completo *</label>
                 <input
@@ -315,7 +315,7 @@ const VendedoresPage = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-gray-300 text-sm font-medium mb-2">CPF</label>
                   <input
@@ -373,7 +373,7 @@ const VendedoresPage = () => {
                 <label htmlFor="ativo" className="text-gray-300">Vendedor ativo</label>
               </div>
 
-              <div className="flex gap-3 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 <Button
                   type="button"
                   onClick={resetForm}

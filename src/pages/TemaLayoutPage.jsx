@@ -22,7 +22,7 @@ const TemaLayoutPage = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <Helmet>
         <title>Cores do Layout - PedidoFlow</title>
       </Helmet>
@@ -63,7 +63,7 @@ const TemaLayoutPage = () => {
                 ) : null}
               </div>
 
-              <div className="mt-4 grid grid-cols-4 gap-2">
+              <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <div className="h-10 rounded-lg" style={{ background: theme.preview.bg }} />
                 <div className="h-10 rounded-lg" style={{ background: theme.preview.surface }} />
                 <div className="h-10 rounded-lg" style={{ background: theme.preview.border }} />

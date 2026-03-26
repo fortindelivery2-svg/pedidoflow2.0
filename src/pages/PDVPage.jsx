@@ -522,29 +522,29 @@ const PDVPage = () => {
   );
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <Helmet> <title>PDV - FORTIN ERP PRO</title> </Helmet>
 
-      <div className="mb-6 flex justify-between items-start">
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div> <h1 className="text-3xl font-bold text-white mb-2">PDV</h1> <p className="text-[var(--layout-text-muted)]">Ponto de Venda Profissional</p> </div>
         
-        <div className="flex gap-2">
-           <Button onClick={() => isCashierOpen ? setShowCloseCashier(true) : setShowOpenCashier(true)} variant="outline" className="bg-[var(--layout-bg)] text-white border-[var(--layout-border)] hover:border-white transition-colors h-12"> 
+        <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:items-center">
+           <Button onClick={() => isCashierOpen ? setShowCloseCashier(true) : setShowOpenCashier(true)} variant="outline" className="bg-[var(--layout-bg)] text-white border-[var(--layout-border)] hover:border-white transition-colors h-12 w-full sm:w-auto"> 
              {isCashierOpen ? 'FECHAR CAIXA' : 'ABRIR CAIXA'} 
            </Button>
-           <Button onClick={() => setShowSuprimento(true)} disabled={!isCashierOpen} className="bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white h-12 px-6 font-bold flex items-center gap-2">
+           <Button onClick={() => setShowSuprimento(true)} disabled={!isCashierOpen} className="bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white h-12 px-6 font-bold flex items-center gap-2 w-full sm:w-auto">
              <Plus className="w-5 h-5" /> SUPRIMENTO
            </Button>
-           <Button onClick={() => setShowRetirada(true)} disabled={!isCashierOpen} className="bg-[#EF4444] hover:bg-red-600 text-white h-12 px-6 font-bold flex items-center gap-2">
+           <Button onClick={() => setShowRetirada(true)} disabled={!isCashierOpen} className="bg-[#EF4444] hover:bg-red-600 text-white h-12 px-6 font-bold flex items-center gap-2 w-full sm:w-auto">
              <Minus className="w-5 h-5" /> RETIRADA
            </Button>
-           <Button onClick={() => setShowReports(!showReports)} disabled={!isCashierOpen} variant="outline" className="bg-[var(--layout-bg)] text-white border-[var(--layout-border)] hover:border-white transition-colors h-12">
+           <Button onClick={() => setShowReports(!showReports)} disabled={!isCashierOpen} variant="outline" className="bg-[var(--layout-bg)] text-white border-[var(--layout-border)] hover:border-white transition-colors h-12 w-full sm:w-auto">
              RELATÓRIOS
            </Button>
         </div>
 
-        <div className={`bg-[var(--layout-surface-2)] px-4 py-2 rounded-lg border border-[var(--layout-border)] flex items-center gap-4 ${!isCashierOpen ? 'opacity-75' : ''}`}>
-           <div className="flex flex-col items-end">
+        <div className={`bg-[var(--layout-surface-2)] px-4 py-2 rounded-lg border border-[var(--layout-border)] flex flex-wrap items-center justify-between gap-4 w-full sm:w-auto ${!isCashierOpen ? 'opacity-75' : ''}`}>
+           <div className="flex flex-col items-start sm:items-end">
              <span className="text-xs text-[var(--layout-text-muted)] uppercase font-bold">Status do Caixa</span>
              <div className={`flex items-center gap-1 font-bold ${isCashierOpen ? 'text-[var(--layout-accent)]' : 'text-red-400'}`}>
                {isCashierOpen ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />} {isCashierOpen ? 'ABERTO' : 'FECHADO'}
@@ -582,8 +582,8 @@ const PDVPage = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="xl:col-span-2">
 
           {showReports && (
             <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-[99999] p-6 pointer-events-auto">
@@ -697,9 +697,9 @@ const PDVPage = () => {
           </div>
             
           {searchTerm && isCashierOpen && (
-            <div className="relative z-40 mb-6 max-h-96 overflow-y-auto bg-[var(--layout-bg)] rounded-lg border border-[var(--layout-border)] shadow-2xl custom-scrollbar">
+            <div className="relative z-40 mb-6 max-h-96 overflow-auto bg-[var(--layout-bg)] rounded-lg border border-[var(--layout-border)] shadow-2xl custom-scrollbar">
                {filteredProdutos.length > 0 ? (
-                 <table className="w-full text-left border-collapse min-w-[600px]">
+                 <table className="w-full text-left border-collapse min-w-[640px]">
                    <thead className="bg-[var(--layout-bg)] sticky top-0 z-10 text-xs text-[var(--layout-text-muted)] uppercase font-bold">
                      <tr>
                        <th className="p-4">CÓDIGO</th>
@@ -786,7 +786,7 @@ const PDVPage = () => {
           )}
 
           <div className="relative z-30 mb-6">
-            <div className="bg-[var(--layout-surface-2)] rounded-lg overflow-hidden flex flex-col h-[500px] border border-[var(--layout-border)]">
+            <div className="bg-[var(--layout-surface-2)] rounded-lg overflow-hidden flex flex-col h-[420px] sm:h-[500px] border border-[var(--layout-border)]">
               <div className="overflow-auto flex-1 custom-scrollbar">
                 <table className="w-full relative min-w-[500px]">
                   <thead className="bg-[var(--layout-bg)] sticky top-0 z-10 border-b border-[var(--layout-border)]">
@@ -873,7 +873,7 @@ const PDVPage = () => {
         </div>
 
         <div className="space-y-4">
-          <div className="bg-[var(--layout-surface-2)] rounded-lg p-6 space-y-4 shadow-lg border border-[var(--layout-border)]">
+          <div className="bg-[var(--layout-surface-2)] rounded-lg p-4 sm:p-6 space-y-4 shadow-lg border border-[var(--layout-border)]">
             <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2"> <DollarSign className="w-5 h-5 text-[var(--layout-accent)]" /> Financeiro </h2>
             <div className="space-y-3">
               <div className="flex justify-between items-center py-2"> <span className="text-[var(--layout-text-muted)]">Subtotal</span> <span className="text-white font-medium text-lg"> R$ {calculateSubtotal().toFixed(2)} </span> </div>
@@ -886,7 +886,7 @@ const PDVPage = () => {
             <Button
               onClick={() => items.length > 0 && setIsPaymentOpen(true)}
               disabled={items.length === 0 || !isCashierOpen}
-              className="col-span-2 bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white py-8 text-xl font-bold shadow-xl shadow-[var(--layout-accent)]/10"
+              className="col-span-2 bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white py-6 sm:py-8 text-lg sm:text-xl font-bold shadow-xl shadow-[var(--layout-accent)]/10"
             >
               PAGAR (F10)
             </Button>

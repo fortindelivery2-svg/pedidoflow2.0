@@ -64,7 +64,7 @@ const ContasAReceberTable = ({
 
   return (
     <div className="w-full overflow-x-auto bg-[var(--layout-bg)] rounded-xl border border-[var(--layout-border)] shadow-xl">
-      <table className="w-full text-left border-collapse">
+      <table className="w-full min-w-[720px] text-left border-collapse">
         <thead className="bg-[var(--layout-surface-2)] text-[var(--layout-text-muted)] text-xs uppercase font-bold tracking-wider">
           <tr>
             <th className="p-4 cursor-pointer hover:bg-[var(--layout-border)] transition-colors" onClick={() => handleSort('data_vencimento')}>

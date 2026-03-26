@@ -89,7 +89,7 @@ const RelatoriosPage = () => {
   };
 
   return (
-    <div className="p-6 min-h-screen bg-[var(--layout-bg)] animate-in fade-in duration-500">
+    <div className="p-4 sm:p-6 min-h-screen bg-[var(--layout-bg)] animate-in fade-in duration-500">
       <Helmet>
         <title>Relatórios - PDV System</title>
         <meta name="description" content="Dashboard de relatórios e análises" />

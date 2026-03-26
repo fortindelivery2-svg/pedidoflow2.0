@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { Search, UserPlus, Filter, RefreshCw, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -47,28 +47,28 @@ const FuncionariosPage = () => {
   };
 
   return (
-    <div className="p-6 min-h-screen bg-[var(--layout-bg)] animate-in fade-in duration-500">
+    <div className="p-4 sm:p-6 min-h-screen bg-[var(--layout-bg)] animate-in fade-in duration-500">
       <Helmet>
-        <title>Funcionários - FORTIN ERP PRO</title>
+        <title>FuncionÃ¡rios - FORTIN ERP PRO</title>
       </Helmet>
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Funcionários</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">FuncionÃ¡rios</h1>
           <p className="text-[var(--layout-text-muted)]">Gerencie sua equipe e colaboradores</p>
         </div>
         <Button 
           onClick={() => setIsCreateModalOpen(true)}
-          className="bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white font-bold"
+          className="bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white font-bold w-full md:w-auto"
         >
           <UserPlus className="w-4 h-4 mr-2" />
-          NOVO FUNCIONÁRIO
+          NOVO FUNCIONÃRIO
         </Button>
       </div>
 
       {/* Filters */}
       <div className="bg-[var(--layout-bg)] p-4 rounded-lg border border-[var(--layout-border)] mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
           <div className="relative">
             <label className="text-xs text-[var(--layout-text-muted)] mb-1 block">Buscar</label>
             <div className="relative">
@@ -111,7 +111,7 @@ const FuncionariosPage = () => {
              </select>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Button 
               onClick={handleFilter}
               disabled={loading}
@@ -133,7 +133,7 @@ const FuncionariosPage = () => {
       </div>
 
       {/* Table */}
-      <div className="h-[calc(100vh-340px)] min-h-[400px]">
+      <div className="h-auto md:h-[calc(100vh-340px)] min-h-[400px]">
         {loading && funcionarios.length === 0 ? (
           <div className="flex justify-center items-center h-full text-[var(--layout-text-muted)]">
              <Loader2 className="w-8 h-8 animate-spin mr-2" /> Carregando...
@@ -172,5 +172,6 @@ const FuncionariosPage = () => {
 };
 
 export default FuncionariosPage;
+
 
 

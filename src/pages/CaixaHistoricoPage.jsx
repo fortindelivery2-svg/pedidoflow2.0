@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { Calendar, Filter, Lock, RefreshCw, Unlock, Trash2 } from 'lucide-react';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
@@ -46,7 +46,7 @@ const CaixaHistoricoPage = () => {
       if (error) throw error;
       setMovimentacoes(data || []);
     } catch (err) {
-      console.error('Erro ao carregar movimentações do caixa:', err);
+      console.error('Erro ao carregar movimentaÃ§Ãµes do caixa:', err);
     } finally {
       setLoading(false);
     }
@@ -61,14 +61,14 @@ const CaixaHistoricoPage = () => {
 
     if (isCurrentOpen) {
       toast({
-        title: 'Ação não permitida',
-        description: 'Feche o caixa antes de apagar a última abertura.',
+        title: 'AÃ§Ã£o nÃ£o permitida',
+        description: 'Feche o caixa antes de apagar a Ãºltima abertura.',
         variant: 'destructive'
       });
       return;
     }
 
-    if (!window.confirm(`Deseja realmente excluir ${mov.tipo}? Esta ação é irreversível.`)) {
+    if (!window.confirm(`Deseja realmente excluir ${mov.tipo}? Esta aÃ§Ã£o Ã© irreversÃ­vel.`)) {
       return;
     }
 
@@ -89,17 +89,17 @@ const CaixaHistoricoPage = () => {
       if (error) throw error;
 
       toast({
-        title: 'Movimentação excluída',
+        title: 'MovimentaÃ§Ã£o excluÃ­da',
         className: 'bg-[#EF4444] text-white border-none'
       });
 
       setPendingDelete(null);
       await fetchCaixaMovimentacoes();
     } catch (err) {
-      console.error('Erro ao excluir movimentações do caixa:', err);
+      console.error('Erro ao excluir movimentaÃ§Ãµes do caixa:', err);
       toast({
         title: 'Erro ao excluir',
-        description: err.message || 'Não foi possível excluir a movimentação.',
+        description: err.message || 'NÃ£o foi possÃ­vel excluir a movimentaÃ§Ã£o.',
         variant: 'destructive'
       });
     } finally {
@@ -112,7 +112,7 @@ const CaixaHistoricoPage = () => {
   }, [user]);
 
   return (
-    <div className="p-6 min-h-screen bg-[var(--layout-bg)] animate-in fade-in duration-500">
+    <div className="p-4 sm:p-6 min-h-screen bg-[var(--layout-bg)] animate-in fade-in duration-500">
       <Helmet>
         <title>Caixa - FORTIN ERP PRO</title>
       </Helmet>
@@ -124,7 +124,7 @@ const CaixaHistoricoPage = () => {
         </div>
         <Button
           onClick={fetchCaixaMovimentacoes}
-          className="bg-[var(--layout-surface-2)] hover:bg-[var(--layout-border)] text-white border border-[var(--layout-border)]"
+          className="bg-[var(--layout-surface-2)] hover:bg-[var(--layout-border)] text-white border border-[var(--layout-border)] w-full md:w-auto"
         >
           {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
           Atualizar
@@ -134,8 +134,8 @@ const CaixaHistoricoPage = () => {
       <div className="bg-[var(--layout-bg)] p-4 rounded-lg border border-[var(--layout-border)] mb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
           <div>
-            <label className="text-xs text-[var(--layout-text-muted)] mb-1 block">Período</label>
-            <div className="flex gap-2">
+            <label className="text-xs text-[var(--layout-text-muted)] mb-1 block">PerÃ­odo</label>
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="date"
                 value={startDate}
@@ -150,7 +150,7 @@ const CaixaHistoricoPage = () => {
               />
             </div>
           </div>
-          <div className="md:col-span-1 flex gap-2">
+          <div className="md:col-span-1 flex flex-col sm:flex-row gap-2">
             <Button
               onClick={fetchCaixaMovimentacoes}
               disabled={loading}
@@ -192,16 +192,16 @@ const CaixaHistoricoPage = () => {
       ) : (
         <div className="overflow-hidden rounded-lg border border-[var(--layout-border)] shadow-xl bg-[var(--layout-bg)]">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[900px] text-sm">
               <thead className="bg-[var(--layout-surface-2)] text-xs uppercase text-[var(--layout-text-muted)] font-bold tracking-wider">
                 <tr>
                   <th className="px-6 py-4 text-left">Data/Hora</th>
                   <th className="px-6 py-4 text-left">Tipo</th>
-                  <th className="px-6 py-4 text-left">Funcionário</th>
+                  <th className="px-6 py-4 text-left">FuncionÃ¡rio</th>
                   <th className="px-6 py-4 text-right">Saldo Inicial</th>
                   <th className="px-6 py-4 text-right">Saldo Final</th>
-                  <th className="px-6 py-4 text-left">Observações</th>
-                  <th className="px-6 py-4 text-center">Ações</th>
+                  <th className="px-6 py-4 text-left">ObservaÃ§Ãµes</th>
+                  <th className="px-6 py-4 text-center">AÃ§Ãµes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-700">
@@ -258,10 +258,11 @@ const CaixaHistoricoPage = () => {
         onClose={() => setPasswordModalOpen(false)}
         onConfirm={handleDeleteConfirm}
         actionType="cancel"
-        actionLabel={pendingDelete ? `Excluir ${pendingDelete.tipo}` : 'Excluir movimentação'}
+        actionLabel={pendingDelete ? `Excluir ${pendingDelete.tipo}` : 'Excluir movimentaÃ§Ã£o'}
       />
     </div>
   );
 };
 
 export default CaixaHistoricoPage;
+

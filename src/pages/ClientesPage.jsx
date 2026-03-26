@@ -177,7 +177,7 @@ const ClientesPage = () => {
   );
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <Helmet>
         <title>Clientes - PDV System</title>
         <meta name="description" content="Gerenciamento de clientes" />
@@ -188,7 +188,7 @@ const ClientesPage = () => {
         <p className="text-[var(--layout-text-muted)]">Gerenciar cadastro de clientes</p>
       </div>
 
-      <div className="bg-[var(--layout-surface-2)] rounded-lg p-6 mb-6">
+      <div className="bg-[var(--layout-surface-2)] rounded-lg p-4 sm:p-6 mb-6">
         <div className="flex flex-col md:flex-row gap-4 mb-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--layout-text-muted)]" />
@@ -202,7 +202,7 @@ const ClientesPage = () => {
           </div>
           <Button
             onClick={() => setIsFormOpen(true)}
-            className="bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white"
+            className="bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white w-full md:w-auto"
           >
             <Plus className="w-5 h-5 mr-2" />
             Novo Cliente
@@ -210,7 +210,7 @@ const ClientesPage = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-[720px]">
             <thead>
               <tr className="border-b border-[var(--layout-border)]">
                 <th className="text-left py-3 px-4 text-[var(--layout-text-muted)] font-medium">Nome</th>
@@ -268,7 +268,7 @@ const ClientesPage = () => {
       {isFormOpen && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--layout-surface-2)] rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-[var(--layout-surface-2)] border-b border-[var(--layout-border)] p-6 flex items-center justify-between">
+            <div className="sticky top-0 bg-[var(--layout-surface-2)] border-b border-[var(--layout-border)] p-4 sm:p-6 flex items-center justify-between">
               <h2 className="text-2xl font-bold text-white">
                 {editingId ? 'Editar Cliente' : 'Novo Cliente'}
               </h2>
@@ -277,7 +277,7 @@ const ClientesPage = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
               <div>
                 <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">Nome Completo *</label>
                 <input
@@ -289,7 +289,7 @@ const ClientesPage = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">CPF</label>
                   <input
@@ -333,7 +333,7 @@ const ClientesPage = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="col-span-2">
                   <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">Cidade</label>
                   <input
@@ -357,7 +357,7 @@ const ClientesPage = () => {
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 <Button
                   type="button"
                   onClick={resetForm}

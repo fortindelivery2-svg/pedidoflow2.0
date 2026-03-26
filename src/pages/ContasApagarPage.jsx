@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { Search, Plus, Edit, Trash2, CheckCircle, AlertCircle, XCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -156,7 +156,7 @@ const ContasApagarPage = () => {
       const total = (data || []).reduce((acc, curr) => acc + (parseFloat(curr.total) || 0), 0);
       setSalesPeriodTotal(total);
     } catch (error) {
-      console.error('Erro ao carregar vendas por período:', error);
+      console.error('Erro ao carregar vendas por perÃ­odo:', error);
     } finally {
       setLoadingSalesPeriod(false);
     }
@@ -223,7 +223,7 @@ const ContasApagarPage = () => {
       try {
         const { error } = await supabase.from('contas_pagar').delete().eq('id', id);
         if (error) throw error;
-        toast({ title: 'Conta excluída com sucesso!' });
+        toast({ title: 'Conta excluÃ­da com sucesso!' });
       } catch (error) {
          toast({ title: 'Erro ao excluir', description: error.message, variant: 'destructive' });
       }
@@ -249,8 +249,8 @@ const ContasApagarPage = () => {
           .eq('id', conta.id);
 
         toast({
-          title: 'Caixa não encontrado',
-          description: 'Não foi possível localizar um caixa para registrar a saída.',
+          title: 'Caixa nÃ£o encontrado',
+          description: 'NÃ£o foi possÃ­vel localizar um caixa para registrar a saÃ­da.',
           variant: 'destructive'
         });
         return;
@@ -351,18 +351,18 @@ const ContasApagarPage = () => {
   };
 
   return (
-    <div className="p-6 animate-in fade-in duration-500">
+    <div className="p-4 sm:p-6 animate-in fade-in duration-500">
       <Helmet>
         <title>Contas a Pagar - Dashboard</title>
       </Helmet>
 
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-white mb-2">Contas a Pagar</h1>
-        <p className="text-[var(--layout-text-muted)]">Gestão financeira de saídas</p>
+        <p className="text-[var(--layout-text-muted)]">GestÃ£o financeira de saÃ­das</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-8">
-        <div className="bg-[var(--layout-surface-2)] p-6 rounded-lg shadow-lg flex items-center justify-between">
+        <div className="bg-[var(--layout-surface-2)] p-4 sm:p-6 rounded-lg shadow-lg flex items-center justify-between">
           <div>
             <p className="text-[var(--layout-text-muted)] text-sm font-medium uppercase">Total a Pagar</p>
             <h3 className="text-2xl font-bold text-white mt-1">R$ {totalPagar.toFixed(2)}</h3>
@@ -371,7 +371,7 @@ const ContasApagarPage = () => {
             <AlertCircle className="w-8 h-8 text-red-500" />
           </div>
         </div>
-        <div className="bg-[var(--layout-surface-2)] p-6 rounded-lg shadow-lg flex items-center justify-between">
+        <div className="bg-[var(--layout-surface-2)] p-4 sm:p-6 rounded-lg shadow-lg flex items-center justify-between">
           <div>
             <p className="text-[var(--layout-text-muted)] text-sm font-medium uppercase">Vendas Totais</p>
             <h3 className="text-2xl font-bold text-white mt-1">
@@ -382,10 +382,10 @@ const ContasApagarPage = () => {
             <CheckCircle className="w-8 h-8 text-[var(--layout-accent)]" />
           </div>
         </div>
-        <div className="bg-[var(--layout-surface-2)] p-6 rounded-lg shadow-lg">
+        <div className="bg-[var(--layout-surface-2)] p-4 sm:p-6 rounded-lg shadow-lg">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <p className="text-[var(--layout-text-muted)] text-sm font-medium uppercase">Vendas por Período</p>
+              <p className="text-[var(--layout-text-muted)] text-sm font-medium uppercase">Vendas por PerÃ­odo</p>
               <h3 className="text-2xl font-bold text-white mt-1">
                 {loadingSalesPeriod ? '...' : `R$ ${salesPeriodTotal.toFixed(2)}`}
               </h3>
@@ -394,7 +394,7 @@ const ContasApagarPage = () => {
           <div className="flex gap-2 mb-3 flex-wrap">
             {[
               { key: 'week', label: '1 Semana' },
-              { key: 'month', label: '1 Mês' },
+              { key: 'month', label: '1 MÃªs' },
               { key: 'custom', label: 'Personalizado' }
             ].map((opt) => (
               <button
@@ -427,7 +427,7 @@ const ContasApagarPage = () => {
             </div>
           )}
         </div>
-        <div className="bg-[var(--layout-surface-2)] p-6 rounded-lg shadow-lg flex items-center justify-between">
+        <div className="bg-[var(--layout-surface-2)] p-4 sm:p-6 rounded-lg shadow-lg flex items-center justify-between">
           <div>
             <p className="text-[var(--layout-text-muted)] text-sm font-medium uppercase">Contas Vencidas</p>
             <h3 className="text-2xl font-bold text-white mt-1">{contasVencidas}</h3>
@@ -436,7 +436,7 @@ const ContasApagarPage = () => {
             <XCircle className="w-8 h-8 text-red-500" />
           </div>
         </div>
-        <div className="bg-[var(--layout-surface-2)] p-6 rounded-lg shadow-lg flex items-center justify-between">
+        <div className="bg-[var(--layout-surface-2)] p-4 sm:p-6 rounded-lg shadow-lg flex items-center justify-between">
           <div>
             <p className="text-[var(--layout-text-muted)] text-sm font-medium uppercase">Contas a Vencer</p>
             <h3 className="text-2xl font-bold text-white mt-1">{contasAVencer}</h3>
@@ -445,7 +445,7 @@ const ContasApagarPage = () => {
             <AlertCircle className="w-8 h-8 text-yellow-500" />
           </div>
         </div>
-        <div className="bg-[var(--layout-surface-2)] p-6 rounded-lg shadow-lg flex items-center justify-between">
+        <div className="bg-[var(--layout-surface-2)] p-4 sm:p-6 rounded-lg shadow-lg flex items-center justify-between">
           <div>
             <p className="text-[var(--layout-text-muted)] text-sm font-medium uppercase">Total Pago</p>
             <h3 className="text-2xl font-bold text-[var(--layout-accent)] mt-1">R$ {totalPago.toFixed(2)}</h3>
@@ -456,7 +456,7 @@ const ContasApagarPage = () => {
         </div>
       </div>
 
-      <div className="bg-[var(--layout-surface-2)] rounded-lg p-6 shadow-lg border border-[var(--layout-border)]">
+      <div className="bg-[var(--layout-surface-2)] rounded-lg p-4 sm:p-6 shadow-lg border border-[var(--layout-border)]">
         <div className="flex flex-col md:flex-row gap-4 mb-6 justify-between items-center">
           <div className="relative w-full md:w-96">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--layout-text-muted)]" />
@@ -464,7 +464,7 @@ const ContasApagarPage = () => {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Buscar por descrição ou fornecedor..."
+              placeholder="Buscar por descriÃ§Ã£o ou fornecedor..."
               className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg pl-10 pr-4 py-2 text-white placeholder-[var(--layout-text-muted)] focus:border-[var(--layout-accent)] focus:outline-none"
             />
           </div>
@@ -485,7 +485,7 @@ const ContasApagarPage = () => {
             ))}
             <Button 
               onClick={() => setIsFormOpen(true)}
-              className="bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white whitespace-nowrap ml-2"
+              className="bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white whitespace-nowrap ml-0 md:ml-2"
             >
               <Plus className="w-4 h-4 mr-2" />
               Nova Conta
@@ -494,15 +494,15 @@ const ContasApagarPage = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full whitespace-nowrap">
+          <table className="w-full min-w-[900px] whitespace-nowrap">
             <thead>
               <tr className="border-b border-[var(--layout-border)]">
-                <th className="py-3 px-4 text-left text-xs font-bold text-[var(--layout-text-muted)] uppercase">Descrição</th>
+                <th className="py-3 px-4 text-left text-xs font-bold text-[var(--layout-text-muted)] uppercase">DescriÃ§Ã£o</th>
                 <th className="py-3 px-4 text-left text-xs font-bold text-[var(--layout-text-muted)] uppercase">Fornecedor</th>
                 <th className="py-3 px-4 text-center text-xs font-bold text-[var(--layout-text-muted)] uppercase">Vencimento</th>
                 <th className="py-3 px-4 text-right text-xs font-bold text-[var(--layout-text-muted)] uppercase">Valor</th>
                 <th className="py-3 px-4 text-center text-xs font-bold text-[var(--layout-text-muted)] uppercase">Status</th>
-                <th className="py-3 px-4 text-right text-xs font-bold text-[var(--layout-text-muted)] uppercase">Ações</th>
+                <th className="py-3 px-4 text-right text-xs font-bold text-[var(--layout-text-muted)] uppercase">AÃ§Ãµes</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-700">
@@ -563,7 +563,7 @@ const ContasApagarPage = () => {
       {isFormOpen && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--layout-surface-2)] rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto border border-[var(--layout-border)] shadow-xl">
-            <div className="p-6 border-b border-[var(--layout-border)] flex justify-between items-center">
+            <div className="p-4 sm:p-6 border-b border-[var(--layout-border)] flex justify-between items-center">
               <h2 className="text-xl font-bold text-white">
                 {editingId ? 'Editar Conta' : 'Nova Conta a Pagar'}
               </h2>
@@ -572,9 +572,9 @@ const ContasApagarPage = () => {
               </button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
               <div>
-                <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">Descrição *</label>
+                <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">DescriÃ§Ã£o *</label>
                 <input
                   type="text"
                   required
@@ -595,7 +595,7 @@ const ContasApagarPage = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">Vencimento *</label>
                   <input
@@ -621,7 +621,7 @@ const ContasApagarPage = () => {
               </div>
 
               <div>
-                <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">Observações</label>
+                <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">ObservaÃ§Ãµes</label>
                 <textarea
                   value={formData.observacoes}
                   onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
@@ -654,3 +654,5 @@ const ContasApagarPage = () => {
 };
 
 export default ContasApagarPage;
+
+
