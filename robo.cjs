@@ -20,7 +20,7 @@ const {
   shouldSendAudioReply,
   synthesizeSpeech,
   transcribeAudioMessage,
-} = require("./audio-service");
+} = require("./audio-service.cjs");
 let ultimoQr = null;
 let qrDataUrl = null;
 let qrPngBuffer = null;

@@ -51,7 +51,7 @@ O QUE MUDA SE EU REMOVER ALGUNS ARQUIVOS DO BOT
  - O repositorio fica mais limpo e seguro (nao versiona dados que mudam sempre).
 
 O QUE EU MANTERIA NO REPOSITORIO
- - chatbot/robo.js
+ - chatbot/robo.cjs
  - chatbot/package.json
  - chatbot/nixpacks.toml
  - chatbot/PASSO_A_PASSO.txt
