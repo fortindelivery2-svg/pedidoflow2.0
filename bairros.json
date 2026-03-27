@@ -1,0 +1,17 @@
+{
+  "updatedAt": "2026-03-27T03:35:46.048Z",
+  "bairros": [
+    {
+      "id": "centro",
+      "nome": "Centro",
+      "taxaEntrega": 5,
+      "tempoMedio": "20-30 min"
+    },
+    {
+      "id": "industrial",
+      "nome": "Industrial",
+      "taxaEntrega": 7,
+      "tempoMedio": "30-40 min"
+    }
+  ]
+}

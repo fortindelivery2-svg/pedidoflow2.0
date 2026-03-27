@@ -1,0 +1,21 @@
+{
+  "horarioFuncionamento": "Seg a Dom • 08:00 às 22:00",
+  "enderecoLoja": "Rua da Loja, 123 - Centro",
+  "ai": {
+    "enabled": true,
+    "mode": "always",
+    "provider": "gemini",
+    "endpoint": "",
+    "authType": "bearer",
+    "headerName": "Authorization",
+    "headerValue": "",
+    "payloadKey": "message",
+    "responsePath": "",
+    "apiKey": "AIzaSyCkdxZKZZrId3jSMnvhQwZvrAcb30nNTOg",
+    "model": "",
+    "temperature": 0.4,
+    "maxTokens": 600,
+    "systemPrompt": ""
+  },
+  "updatedAt": "2026-03-27T03:35:46.097Z"
+}
