@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "dotenv": "^16.4.7",
     "moment-timezone": "^0.5.45",
     "openai": "^4.78.1",
     "puppeteer": "^24.26.1",

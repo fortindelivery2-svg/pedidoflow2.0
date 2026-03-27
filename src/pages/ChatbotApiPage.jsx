@@ -53,6 +53,7 @@ const buildBotUrls = (rawUrl, nonce) => {
       botQrImageUrl: '',
       botQrPageUrl: '',
       botBairrosUrl: '',
+      botCatalogUrl: '',
       botConfigUrl: '',
       isQrDirect: false,
     };
@@ -78,13 +79,105 @@ const buildBotUrls = (rawUrl, nonce) => {
     botQrImageUrl,
     botQrPageUrl: `${baseUrl}/qr`,
     botBairrosUrl: `${baseUrl}/bairros`,
+    botCatalogUrl: `${baseUrl}/catalogo`,
     botConfigUrl: `${baseUrl}/config`,
     isQrDirect,
   };
 };
 
+const normalizeText = (value) =>
+  String(value || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+
+const parseMeasure = (value) => {
+  const text = normalizeText(value);
+  const match = text.match(/(\d+(?:[.,]\d+)?)\s*(ml|l|lt|litro|litros|g|kg)/);
+  if (!match) return {};
+  const raw = Number(match[1].replace(',', '.'));
+  if (!Number.isFinite(raw)) return {};
+  const unit = match[2];
+  if (unit === 'ml') return { volumeMl: Math.round(raw) };
+  if (unit === 'l' || unit === 'lt' || unit === 'litro' || unit === 'litros') {
+    return { volumeMl: Math.round(raw * 1000) };
+  }
+  if (unit === 'g') return { pesoKg: Math.round((raw / 1000) * 100) / 100 };
+  if (unit === 'kg') return { pesoKg: Math.round(raw * 100) / 100 };
+  return {};
+};
+
+const guessCatalogCategory = (product) => {
+  const base = normalizeText(`${product?.categoria || ''} ${product?.descricao || ''}`);
+  if (!base) return 'outros';
+  if (base.includes('gelo')) return 'gelo';
+  if (base.includes('cerveja') || base.includes('chopp')) return 'cerveja';
+  if (
+    base.includes('destil') ||
+    base.includes('whisky') ||
+    base.includes('vodka') ||
+    base.includes('gin') ||
+    base.includes('tequila') ||
+    base.includes('rum') ||
+    base.includes('cachaca')
+  )
+    return 'destilado';
+  if (
+    base.includes('refrigerante') ||
+    base.includes('refri') ||
+    base.includes('suco') ||
+    base.includes('agua') ||
+    base.includes('energ')
+  )
+    return 'nao alcool';
+  if (base.includes('carvao')) return 'carvao';
+  return base.split(' ')[0] || 'outros';
+};
+
+const buildCatalogItems = (products = []) =>
+  products
+    .filter((product) => product && product.ativo !== false)
+    .map((product) => {
+      const measure = parseMeasure(`${product?.descricao || ''} ${product?.unidade || ''}`);
+      return {
+        id: product.id,
+        nome: product.descricao,
+        categoria: guessCatalogCategory(product),
+        unidade: product.unidade || '',
+        preco: Number(product.valor_venda || 0),
+        estoque: Number(product.estoque || 0),
+        ativo: product.ativo !== false,
+        ...measure,
+      };
+    });
+
+const buildAiDefaults = (value = {}) => ({
+  enabled: Boolean(value.enabled),
+  mode: value.mode || 'fallback',
+  provider: value.provider || 'custom',
+  endpoint: value.endpoint || '',
+  authType: value.authType || 'bearer',
+  headerName: value.headerName || 'Authorization',
+  headerValue: value.headerValue || '',
+  payloadKey: value.payloadKey || 'message',
+  responsePath: value.responsePath || '',
+  apiKey: value.apiKey || '',
+  model: value.model || '',
+  temperature: Number.isFinite(Number(value.temperature)) ? Number(value.temperature) : 0.4,
+  maxTokens: Number.isFinite(Number(value.maxTokens)) ? Number(value.maxTokens) : 600,
+  systemPrompt: value.systemPrompt || '',
+});
+
 const ChatbotApiPage = () => {
-  const { chatbotApi, chatbotDefaultResponse, snapshot, saveBairrosEntrega, saveAppSettings } = useDeliveryHub();
+  const {
+    chatbotApi,
+    chatbotDefaultResponse,
+    snapshot,
+    saveBairrosEntrega,
+    saveAppSettings,
+    saveChatbotAiSettings,
+  } = useDeliveryHub();
   const [response, setResponse] = useState(chatbotDefaultResponse);
   const [loadingAction, setLoadingAction] = useState('');
   const [messageInput, setMessageInput] = useState('');
@@ -94,8 +187,11 @@ const ChatbotApiPage = () => {
   const [appInfoDraft, setAppInfoDraft] = useState(snapshot.settings?.appInfo || {});
   const [savingBairros, setSavingBairros] = useState(false);
   const [savingConfig, setSavingConfig] = useState(false);
+  const [savingAi, setSavingAi] = useState(false);
   const [bairrosDirty, setBairrosDirty] = useState(false);
   const [configDirty, setConfigDirty] = useState(false);
+  const [aiDirty, setAiDirty] = useState(false);
+  const [aiDraft, setAiDraft] = useState(() => buildAiDefaults(snapshot.settings?.chatbotAi || {}));
   const [botBaseUrl, setBotBaseUrl] = useState(() => {
     return window.localStorage.getItem('fortin_whatsapp_bot_url') || 'http://localhost:3333';
   });
@@ -105,6 +201,7 @@ const ChatbotApiPage = () => {
   const [botOnline, setBotOnline] = useState(null);
   const [botQrError, setBotQrError] = useState(false);
   const [botStatus, setBotStatus] = useState('');
+  const [botCatalogTotal, setBotCatalogTotal] = useState(null);
   const autoSyncRef = useRef(false);
   const editorRef = useRef(null);
 
@@ -133,6 +230,11 @@ const ChatbotApiPage = () => {
 
   const bairrosAtendidos = snapshot.settings?.bairros || [];
   const appInfo = snapshot.settings?.appInfo || {};
+  const catalogItems = useMemo(() => {
+    const baseProdutos =
+      snapshot.publishedProducts?.length > 0 ? snapshot.publishedProducts : snapshot.products;
+    return buildCatalogItems(baseProdutos);
+  }, [snapshot.publishedProducts, snapshot.products]);
 
   const menuText = useMemo(
     () =>
@@ -177,7 +279,19 @@ const ChatbotApiPage = () => {
     setConfigDirty(false);
   }, [snapshot.settings?.appInfo]);
 
-  const { baseUrl: normalizedBotBaseUrl, botQrImageUrl, botQrPageUrl, botBairrosUrl, botConfigUrl } =
+  useEffect(() => {
+    setAiDraft(buildAiDefaults(snapshot.settings?.chatbotAi || {}));
+    setAiDirty(false);
+  }, [snapshot.settings?.chatbotAi]);
+
+  const {
+    baseUrl: normalizedBotBaseUrl,
+    botQrImageUrl,
+    botQrPageUrl,
+    botBairrosUrl,
+    botCatalogUrl,
+    botConfigUrl,
+  } =
     useMemo(() => buildBotUrls(botBaseUrl, botQrNonce), [botBaseUrl, botQrNonce]);
   const isMixedContent =
     typeof window !== 'undefined' &&
@@ -192,6 +306,17 @@ const ChatbotApiPage = () => {
     const data = await response.json();
     if (Array.isArray(data?.bairros)) {
       setBotBairrosTotal(data.bairros.length);
+    }
+  };
+
+  const fetchBotCatalogo = async () => {
+    const response = await fetch(botCatalogUrl);
+    if (!response.ok) {
+      throw new Error(`Falha ao ler catalogo (${response.status}).`);
+    }
+    const data = await response.json();
+    if (Array.isArray(data?.itens)) {
+      setBotCatalogTotal(data.itens.length);
     }
   };
 
@@ -225,18 +350,50 @@ const ChatbotApiPage = () => {
     }
   };
 
+  const handleSyncCatalogo = async ({ silent = false, catalogoOverride } = {}) => {
+    try {
+      if (!silent) {
+        setSyncStatus('Sincronizando catalogo...');
+      }
+      const itens = Array.isArray(catalogoOverride) ? catalogoOverride : catalogItems;
+      const response = await fetch(botCatalogUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itens }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Falha na sincronizacao (${response.status}).`);
+      }
+
+      if (!silent) {
+        setSyncStatus(`Catalogo sincronizado: ${itens.length} itens.`);
+      }
+      await fetchBotCatalogo();
+    } catch (error) {
+      if (!silent) {
+        setSyncStatus(error.message || 'Falha ao sincronizar catalogo.');
+      }
+      if (silent) {
+        throw error;
+      }
+    }
+  };
+
   const handleSyncConfig = async ({ silent = false, appInfoOverride } = {}) => {
     try {
       if (!silent) {
         setSyncStatus('Sincronizando horario e endereco...');
       }
       const appInfo = appInfoOverride || snapshot.settings?.appInfo || {};
+      const aiConfig = buildAiDefaults(aiDraft);
       const response = await fetch(botConfigUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           horarioFuncionamento: appInfo.horarioFuncionamento || '',
           enderecoLoja: appInfo.enderecoLoja || '',
+          ai: aiConfig,
         }),
       });
 
@@ -250,6 +407,35 @@ const ChatbotApiPage = () => {
     } catch (error) {
       if (!silent) {
         setSyncStatus(error.message || 'Falha ao sincronizar configuracoes.');
+      }
+      if (silent) {
+        throw error;
+      }
+    }
+  };
+
+  const handleSyncAi = async ({ silent = false, aiOverride } = {}) => {
+    try {
+      if (!silent) {
+        setSyncStatus('Sincronizando IA...');
+      }
+      const aiConfig = buildAiDefaults(aiOverride || aiDraft);
+      const response = await fetch(botConfigUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ai: aiConfig }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Falha na sincronizacao (${response.status}).`);
+      }
+
+      if (!silent) {
+        setSyncStatus('IA sincronizada com sucesso.');
+      }
+    } catch (error) {
+      if (!silent) {
+        setSyncStatus(error.message || 'Falha ao sincronizar IA.');
       }
       if (silent) {
         throw error;
@@ -284,6 +470,13 @@ const ChatbotApiPage = () => {
     setConfigDirty(false);
   };
 
+  const saveAiOnly = async () => {
+    const cleaned = buildAiDefaults(aiDraft);
+    await saveChatbotAiSettings(cleaned);
+    setAiDirty(false);
+    return cleaned;
+  };
+
   const handleSyncAll = async ({ silent = false, includeDrafts = false } = {}) => {
     try {
       if (!silent) {
@@ -291,6 +484,7 @@ const ChatbotApiPage = () => {
       }
       let bairrosOverride;
       let appInfoOverride;
+      let aiOverride;
       if (includeDrafts) {
         if (bairrosDirty) {
           bairrosOverride = await saveBairrosOnly();
@@ -299,9 +493,14 @@ const ChatbotApiPage = () => {
           await saveConfigOnly();
           appInfoOverride = appInfoDraft;
         }
+        if (aiDirty) {
+          aiOverride = await saveAiOnly();
+        }
       }
       await handleSyncBairros({ silent: true, bairrosOverride });
       await handleSyncConfig({ silent: true, appInfoOverride });
+      await handleSyncCatalogo({ silent: true });
+      await handleSyncAi({ silent: true, aiOverride });
       if (!silent) {
         setSyncStatus('Dados do robo sincronizados com sucesso.');
       }
@@ -331,8 +530,14 @@ const ChatbotApiPage = () => {
   }, [normalizedBotBaseUrl, botOnline, snapshot.settings?.bairros?.length]);
 
   useEffect(() => {
+    if (!normalizedBotBaseUrl || !botOnline) return;
+    handleSyncCatalogo({ silent: true }).catch(() => {});
+  }, [normalizedBotBaseUrl, botOnline, snapshot.publishedProducts?.length, snapshot.products?.length]);
+
+  useEffect(() => {
     if (!normalizedBotBaseUrl) return;
     fetchBotBairros().catch(() => {});
+    fetchBotCatalogo().catch(() => {});
   }, [normalizedBotBaseUrl, botQrNonce]);
 
   useEffect(() => {
@@ -563,6 +768,18 @@ const ChatbotApiPage = () => {
     }
   };
 
+  const handleSaveAi = async () => {
+    setSavingAi(true);
+    try {
+      const cleaned = await saveAiOnly();
+      await handleSyncAi({ silent: false, aiOverride: cleaned });
+    } catch (error) {
+      setSyncStatus(error.message || 'Falha ao salvar IA.');
+    } finally {
+      setSavingAi(false);
+    }
+  };
+
   const handleSyncBairrosFromDrafts = async () => {
     try {
       let bairrosOverride;
@@ -585,6 +802,18 @@ const ChatbotApiPage = () => {
       await handleSyncConfig({ silent: false, appInfoOverride });
     } catch (error) {
       setSyncStatus(error.message || 'Falha ao sincronizar configuracoes.');
+    }
+  };
+
+  const handleSyncAiFromDrafts = async () => {
+    try {
+      let aiOverride;
+      if (aiDirty) {
+        aiOverride = await saveAiOnly();
+      }
+      await handleSyncAi({ silent: false, aiOverride });
+    } catch (error) {
+      setSyncStatus(error.message || 'Falha ao sincronizar IA.');
     }
   };
 
@@ -1069,6 +1298,272 @@ const ChatbotApiPage = () => {
             {syncStatus ? (
               <div className="text-xs text-[var(--layout-text-muted)]">{syncStatus}</div>
             ) : null}
+          </div>
+        </PanelCard>
+
+        <PanelCard
+          title="IA e Catálogo"
+          subtitle="Configure o agente de IA e sincronize o estoque com o bot."
+        >
+          <div className="space-y-6">
+            <div className="rounded-xl border border-[var(--layout-border)] bg-[var(--layout-bg)] p-4">
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">
+                Agente de IA
+              </div>
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                <div className="flex items-center justify-between rounded-lg border border-[var(--layout-border)] bg-[var(--layout-surface-2)] px-3 py-3">
+                  <span className="text-sm text-[var(--layout-text-muted)]">IA ativa</span>
+                  <input
+                    type="checkbox"
+                    checked={aiDraft.enabled}
+                    onChange={(event) => {
+                      setAiDirty(true);
+                      setAiDraft((current) => ({ ...current, enabled: event.target.checked }));
+                    }}
+                    className="h-5 w-5 accent-[var(--layout-accent)]"
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">
+                    Modo da IA
+                  </label>
+                  <select
+                    value={aiDraft.mode}
+                    onChange={(event) => {
+                      setAiDirty(true);
+                      setAiDraft((current) => ({ ...current, mode: event.target.value }));
+                    }}
+                    className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-3 py-2 text-sm text-white outline-none focus:border-[var(--layout-accent)]"
+                  >
+                    <option value="fallback">Somente quando não entender</option>
+                    <option value="always">Responder tudo</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">
+                    Provedor
+                  </label>
+                  <select
+                    value={aiDraft.provider}
+                    onChange={(event) => {
+                      setAiDirty(true);
+                      setAiDraft((current) => ({ ...current, provider: event.target.value }));
+                    }}
+                    className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-3 py-2 text-sm text-white outline-none focus:border-[var(--layout-accent)]"
+                  >
+                    <option value="custom">API personalizada</option>
+                    <option value="openai">OpenAI</option>
+                    <option value="gemini">Google Gemini</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">
+                    Temperatura
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="1"
+                    value={aiDraft.temperature}
+                    onChange={(event) => {
+                      setAiDirty(true);
+                      setAiDraft((current) => ({ ...current, temperature: event.target.value }));
+                    }}
+                    className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-3 py-2 text-sm text-white outline-none focus:border-[var(--layout-accent)]"
+                  />
+                </div>
+              </div>
+
+              {aiDraft.provider === 'custom' ? (
+                <div className="mt-4 grid gap-4 md:grid-cols-2">
+                  <div className="md:col-span-2">
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">
+                      Endpoint da IA
+                    </label>
+                    <input
+                      value={aiDraft.endpoint}
+                      onChange={(event) => {
+                        setAiDirty(true);
+                        setAiDraft((current) => ({ ...current, endpoint: event.target.value }));
+                      }}
+                      placeholder="https://sua-api.com/agent"
+                      className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-3 py-2 text-sm text-white outline-none focus:border-[var(--layout-accent)]"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">
+                      Tipo de Auth
+                    </label>
+                    <select
+                      value={aiDraft.authType}
+                      onChange={(event) => {
+                        setAiDirty(true);
+                        setAiDraft((current) => ({ ...current, authType: event.target.value }));
+                      }}
+                      className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-3 py-2 text-sm text-white outline-none focus:border-[var(--layout-accent)]"
+                    >
+                      <option value="bearer">Bearer</option>
+                      <option value="header">Header personalizado</option>
+                      <option value="basic">Basic</option>
+                      <option value="none">Sem auth</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">
+                      Token / Valor do Header
+                    </label>
+                    <input
+                      value={aiDraft.headerValue}
+                      onChange={(event) => {
+                        setAiDirty(true);
+                        setAiDraft((current) => ({ ...current, headerValue: event.target.value }));
+                      }}
+                      placeholder="token ou senha"
+                      className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-3 py-2 text-sm text-white outline-none focus:border-[var(--layout-accent)]"
+                    />
+                  </div>
+                  {aiDraft.authType === 'header' ? (
+                    <div className="md:col-span-2">
+                      <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">
+                        Nome do Header
+                      </label>
+                      <input
+                        value={aiDraft.headerName}
+                        onChange={(event) => {
+                          setAiDirty(true);
+                          setAiDraft((current) => ({ ...current, headerName: event.target.value }));
+                        }}
+                        placeholder="x-api-key"
+                        className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-3 py-2 text-sm text-white outline-none focus:border-[var(--layout-accent)]"
+                      />
+                    </div>
+                  ) : null}
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">
+                      Campo da mensagem
+                    </label>
+                    <input
+                      value={aiDraft.payloadKey}
+                      onChange={(event) => {
+                        setAiDirty(true);
+                        setAiDraft((current) => ({ ...current, payloadKey: event.target.value }));
+                      }}
+                      placeholder="message"
+                      className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-3 py-2 text-sm text-white outline-none focus:border-[var(--layout-accent)]"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">
+                      Caminho da resposta
+                    </label>
+                    <input
+                      value={aiDraft.responsePath}
+                      onChange={(event) => {
+                        setAiDirty(true);
+                        setAiDraft((current) => ({ ...current, responsePath: event.target.value }));
+                      }}
+                      placeholder="reply ou data.answer"
+                      className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-3 py-2 text-sm text-white outline-none focus:border-[var(--layout-accent)]"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-4 grid gap-4 md:grid-cols-2">
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">
+                      API Key
+                    </label>
+                    <input
+                      type="password"
+                      value={aiDraft.apiKey}
+                      onChange={(event) => {
+                        setAiDirty(true);
+                        setAiDraft((current) => ({ ...current, apiKey: event.target.value }));
+                      }}
+                      placeholder="chave da API"
+                      className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-3 py-2 text-sm text-white outline-none focus:border-[var(--layout-accent)]"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">
+                      Modelo
+                    </label>
+                    <input
+                      value={aiDraft.model}
+                      onChange={(event) => {
+                        setAiDirty(true);
+                        setAiDraft((current) => ({ ...current, model: event.target.value }));
+                      }}
+                      placeholder={aiDraft.provider === 'gemini' ? 'gemini-1.5-flash' : 'gpt-4o-mini'}
+                      className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-3 py-2 text-sm text-white outline-none focus:border-[var(--layout-accent)]"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-4">
+                <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">
+                  Prompt do sistema (opcional)
+                </label>
+                <textarea
+                  value={aiDraft.systemPrompt}
+                  onChange={(event) => {
+                    setAiDirty(true);
+                    setAiDraft((current) => ({ ...current, systemPrompt: event.target.value }));
+                  }}
+                  rows={3}
+                  className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-3 py-2 text-sm text-white outline-none focus:border-[var(--layout-accent)]"
+                />
+              </div>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  onClick={handleSaveAi}
+                  className="bg-[var(--layout-accent)] text-white hover:bg-[var(--layout-accent-strong)]"
+                >
+                  {savingAi ? 'Salvando...' : 'Salvar IA'}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={handleSyncAiFromDrafts}
+                  className="bg-[var(--layout-surface-2)] text-white hover:bg-[var(--layout-border)]"
+                >
+                  Sincronizar IA
+                </Button>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-[var(--layout-border)] bg-[var(--layout-bg)] p-4">
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">
+                Catálogo do bot
+              </div>
+              <div className="mt-2 text-sm text-[var(--layout-text-muted)]">
+                Itens prontos para sincronizar: {catalogItems.length}
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  onClick={() => handleSyncCatalogo({ silent: false })}
+                  className="bg-[var(--layout-accent)] text-white hover:bg-[var(--layout-accent-strong)]"
+                >
+                  Sincronizar catálogo
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => fetchBotCatalogo().catch(() => setBotCatalogTotal(null))}
+                  className="bg-[var(--layout-surface-2)] text-white hover:bg-[var(--layout-border)]"
+                >
+                  Recarregar catálogo do bot
+                </Button>
+              </div>
+              <div className="mt-2 text-xs text-[var(--layout-text-muted)]">
+                {botCatalogTotal === null
+                  ? 'Itens no bot: carregando...'
+                  : `Itens no bot: ${botCatalogTotal}`}
+              </div>
+            </div>
           </div>
         </PanelCard>
       </div>

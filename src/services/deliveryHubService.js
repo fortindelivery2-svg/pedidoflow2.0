@@ -24,6 +24,22 @@ const defaultSettings = {
     corSecundaria: '#4b2e1f',
     logoUrl: '',
   },
+  chatbotAi: {
+    enabled: false,
+    mode: 'fallback',
+    provider: 'custom',
+    endpoint: '',
+    authType: 'bearer',
+    headerName: 'Authorization',
+    headerValue: '',
+    payloadKey: 'message',
+    responsePath: '',
+    apiKey: '',
+    model: '',
+    temperature: 0.4,
+    maxTokens: 600,
+    systemPrompt: '',
+  },
   lastOrderNumber: 1000,
 };
 
@@ -33,6 +49,10 @@ const mergeSettings = (value = {}) => ({
   appInfo: {
     ...defaultSettings.appInfo,
     ...(value.appInfo || {}),
+  },
+  chatbotAi: {
+    ...defaultSettings.chatbotAi,
+    ...(value.chatbotAi || {}),
   },
 });
 
@@ -337,6 +357,18 @@ export const saveAppSettings = async (userId, appInfo) => {
   await pushAppInfoToBot({
     ...settings.appInfo,
     ...appInfo,
+  });
+  return result;
+};
+
+export const saveChatbotAiSettings = async (userId, chatbotAi) => {
+  const settings = getStoredSettings(userId);
+  const result = await saveSettings(userId, {
+    ...settings,
+    chatbotAi: {
+      ...settings.chatbotAi,
+      ...(chatbotAi || {}),
+    },
   });
   return result;
 };
