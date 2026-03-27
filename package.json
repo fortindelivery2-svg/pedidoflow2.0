@@ -8,7 +8,9 @@
     "build": "node tools/generate-llms.js || true && vite build",
     "preview": "vite preview --host :: --port 3000",
     "lint": "eslint . --quiet",
-    "lint:warn": "eslint ."
+    "lint:warn": "eslint .",
+    "start": ".\\\\.node20\\\\node-v20.9.0-win-x64\\\\node.exe robo.js",
+    "postinstall": "npx puppeteer browsers install chrome"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "^1.4.0",
