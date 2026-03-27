@@ -2,20 +2,20 @@
   "horarioFuncionamento": "",
   "enderecoLoja": "",
   "ai": {
-    "enabled": true,
+    "enabled": false,
     "mode": "fallback",
-    "provider": "gemini",
+    "provider": "custom",
     "endpoint": "",
     "authType": "bearer",
     "headerName": "Authorization",
     "headerValue": "",
     "payloadKey": "message",
     "responsePath": "",
-    "apiKey": "AIzaSyCXPhN_4bwZfw0C-2xtMtwNpWSJAFb1-_A",
+    "apiKey": "",
     "model": "",
     "temperature": 0.4,
     "maxTokens": 600,
     "systemPrompt": ""
   },
-  "updatedAt": "2026-03-27T19:52:37.283Z"
+  "updatedAt": "2026-03-27T22:57:31.034Z"
 }
